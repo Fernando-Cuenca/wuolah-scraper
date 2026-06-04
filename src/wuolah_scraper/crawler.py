@@ -203,7 +203,7 @@ class WuolahCrawler:
         if filters.subject_slug:
             chosen_subjects = [s for s in subjects if s.get('slug') == filters.subject_slug]
             if not chosen_subjects:
-                self._note(f'Subject {filters.subject_slug} no apareció en dehydratedState de {community_slug}; se intentará igualmente por API si procede.')
+                self._note(f'Subject {filters.subject_slug} not found in dehydratedState for {community_slug}; will attempt via API.')
                 chosen_subjects = [{'slug': filters.subject_slug, 'communityId': community_id, 'course': filters.course}]
 
         for subject in chosen_subjects:
@@ -259,13 +259,13 @@ class WuolahCrawler:
                         record = detailed
                         self.summary['document_details_fetched'] += 1
                 except Exception as exc:
-                    self._note(f'Falló detalle de documento {doc.get("id")}: {exc}')
+                    self._note(f'Failed to fetch document detail for {doc.get("id")}: {exc}')
             self.storage.upsert_document(record)
             self.summary['documents_stored'] += 1
 
         self.storage.commit()
         self._note(
-            f'Subject crawl terminado: community={community_slug} subject={subject_slug} course={course} category={filters.category or "*"}'
+            f'Subject crawl complete: community={community_slug} subject={subject_slug} course={course} category={filters.category or "*"}'
         )
 
     def summary_json(self) -> str:

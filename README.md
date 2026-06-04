@@ -1,74 +1,70 @@
 # Wuolah Scraper
 
-Scraper de metadata y descarga de documentos de [Wuolah](https://wuolah.com).
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![PyPI - Version](https://img.shields.io/pypi/v/wuolah-scraper)](https://pypi.org/project/wuolah-scraper/)
 
-**ATENCIÓN — LEE ESTO ANTES DE USARLO:**
+A Python toolkit for browsing, searching, and downloading documents from [Wuolah](https://wuolah.com) using your own authenticated session.
 
-## ⚠️ Requisito de cuenta
+---
 
-Este scraper **solo funciona con cuenta Wuolah PRO/Premium** (sin anuncios).
+## Important — Read Before Using
 
-**Si tienes cuenta normal (gratuita)**:
-- Wuolah te mete publicidad y un flujo de "ver anuncio para descargar"
-- La API de descarga (`/v2/download`) requiere token `noAdsToken` que solo se obtiene tras ver anuncios
-- Este scraper **no salta la publicidad ni evade el paywall**
-- Si lo intentas con cuenta normal: la API devuelve `fileUrl` vacío o error
+**This tool requires a Wuolah Premium (ad-free) account.** The official download endpoint (`/v2/download`) uses a `noAdsToken` that is only available to premium users. If you have a free account, Wuolah inserts an advertisement flow before each download and the API will return an empty `fileUrl`.
 
-**Si tienes cuenta PRO/Premium**:
-- La descarga oficial funciona directamente sin anuncios
-- Solo necesitas tus cookies/tokens de sesión
+This project **does not**:
+- Bypass paywalls or advertisement gates
+- Share, distribute, or store your credentials
+- Redistribute copyrighted documents from Wuolah
+- Perform unauthorized mass scraping
 
-No uses esto para bajar contenido que no has pagado o para el que no tienes derecho de acceso.
+It simply automates what you can already do manually through your browser session. You are responsible for complying with Wuolah's terms of service.
 
-## 📜 Disclaimer legal
+---
 
-Este proyecto es una herramienta de **automatización para tu propia cuenta**. No:
+## Features
 
-- 🚫 Evade paywalls ni salta publicidad
-- 🚫 Comparte credenciales ni cookies
-- 🚫 Distribuye documentos de Wuolah
-- 🚫 Bypassea sistemas de autenticación
-- 🚫 Hace scraping masivo no autorizado
+- **Metadata indexing** — universities, centers, degree programs, subjects, documents
+- **Rich search** — filter by university, community, subject, keyword, category, course, creator
+- **Authenticated downloads** — official `/v2/download` flow with your session cookies/tokens
+- **PDF cleaner** — remove tracking and ad links from downloaded PDFs
+- **SQLite storage** — all metadata persisted locally for fast queries
+- **Desktop GUI** — Tkinter interface for cookie setup, search, and download
+- **CLI** — full argparse-based command-line interface
 
-Solo automatiza lo que YA puedes hacer manualmente desde el navegador con tu cuenta. El usuario es responsable del uso que haga de esta herramienta y debe respetar los términos de servicio de Wuolah.
+---
 
-## 🧠 ¿Qué hace?
-
-1. **Indexa metadata**: universidades, centros, grados, asignaturas, documentos
-2. **Busca documentos**: por universidad, comunidad, asignatura, keyword, categoría
-3. **Descarga oficial**: usando `/v2/download` autenticado con tu sesión
-4. **Limpia PDFs**: elimina enlaces de tracking/anuncios de PDFs ya descargados
-5. **GUI guarra**: interfaz Tkinter para no tocar terminal (ver abajo)
-
-## 📦 Instalación
+## Installation
 
 ```bash
 git clone https://github.com/Fernando-Cuenca/wuolah-scraper.git
 cd wuolah-scraper
 pip install -e .
 
-# Para la GUI (necesita tk)
-pip install -e ".[gui]"
-
-# Para limpiar PDFs (opcional)
+# Optional: PDF cleaning support
 pip install -e ".[pdf]"
 
-# Todo junto
+# Optional: everything
 pip install -e ".[all]"
 ```
 
-## 🔑 Configuración
+Requires Python 3.10 or later. The only hard dependency is `requests`. Tkinter is included with Python on most platforms. PDF cleaning requires `PyMuPDF`.
 
-Copia el ejemplo:
+---
+
+## Configuration
+
+Copy the example config and edit it:
 
 ```bash
 cp config.example.json config.json
 ```
 
-Edita `config.json` y mete tus credenciales de UNA de estas formas:
+Choose one authentication method:
 
-### Opción A: cookie_header (recomendado)
-Pega la cookie entera de sesión (la sacas de DevTools > Application > Cookies > copiar valor de `token` y `refreshToken`):
+### Option A — cookie header (recommended)
+
+Paste your full session cookie string from the browser (DevTools → Application → Cookies):
 
 ```json
 "auth": {
@@ -76,16 +72,18 @@ Pega la cookie entera de sesión (la sacas de DevTools > Application > Cookies >
 }
 ```
 
-### Opción B: cookie_file
-Exporta las cookies desde el navegador con una extensión (cookies.txt formato Netscape):
+### Option B — cookie file
+
+Export cookies from your browser in Netscape format (extensions like "cookies.txt" can do this):
 
 ```json
 "auth": {
-  "cookie_file": "/ruta/a/tus/cookies.txt"
+  "cookie_file": "/path/to/cookies.txt"
 }
 ```
 
-### Opción C: tokens directos
+### Option C — direct tokens
+
 ```json
 "auth": {
   "access_token": "eyJhbG...",
@@ -93,53 +91,91 @@ Exporta las cookies desde el navegador con una extensión (cookies.txt formato N
 }
 ```
 
-## 🖥️ CLI — comandos
+The scraper auto-detects `token` and `refreshToken` keys from cookies and will refresh expired access tokens via `/login/refresh`.
+
+---
+
+## CLI Usage
 
 ```bash
-# Probar auth
+# Test authentication
 wuolah-scraper auth-check --config config.json
 
-# Listar universidades
+# List all universities
 wuolah-scraper universities --config config.json
 
-# Crawl de una universidad entera
-wuolah-scraper crawl --config config.json --university-slug universidad-carlos-iii-de-madrid
+# Crawl an entire university
+wuolah-scraper crawl --config config.json \
+  --university-slug universidad-carlos-iii-de-madrid
 
-# Crawl filtrado (comunidad + asignatura + categoria)
+# Crawl with filters (community + subject + category)
 wuolah-scraper crawl --config config.json \
   --community-slug uc-3-m-escuela-politecnica-superior-campus-leganes/grado-ingenieria-tecnologias-industriales \
-  --subject-slug fisica-ii \
+  --subject-slug physics-ii \
   --category examenes \
   --max-pages 3
 
-# Descargar documento por ID
+# Download a specific document by ID
 wuolah-scraper official-download --config config.json --document-id 12345
 
-# Limpiar anuncios de PDF
-wuolah-scraper clean-pdf --aggressive archivo.pdf
+# Clean ad/tracking links from a PDF
+wuolah-scraper clean-pdf --aggressive file.pdf
+
+# Show database table counts
+wuolah-scraper db-counts --config config.json
 ```
 
-## 🖼️ GUI guarra
+### Available filters
+
+| Flag | Description |
+|------|-------------|
+| `--university-slug` | Filter by university |
+| `--community-slug` | Filter by degree/community |
+| `--subject-slug` | Filter by subject |
+| `--study-type-slug` | Filter by study type |
+| `--center-slug` | Filter by center/faculty |
+| `--course` | Filter by course year (1, 2, 3, 4...) |
+| `--category` | One of: apuntes, examenes, ejercicios, practicas, trabajos, test, pec, otros |
+| `--creator-user-id` | Filter by uploader |
+| `--keyword` | Full-text search in document name/slug/teacher/comments |
+| `--sort` | Sort order (default: `-numDownloads`) |
+| `--max-pages` | Limit API pagination (0 = unlimited) |
+| `--all-universities` | Crawl every known university |
+
+---
+
+## Desktop GUI
 
 ```bash
 wuolah-gui
 ```
 
-Abre una ventana Tkinter (sin dependencias extra, viene con Python):
+A Tkinter interface for those who prefer not to use the terminal:
 
-1. **Pega tu cookie** arriba
-2. Mete universidad/comunidad/asignatura
-3. Pulsa **BUSCAR**
-4. Doble click en resultado → copia enlace
-5. Selecciona + **Descargar** → te pide carpeta
+1. Paste your cookie at the top
+2. Set university, community, subject, and filters
+3. Click **Search**
+4. Double-click a result to copy its URL
+5. Select rows and click **Download** to save files locally
 
-La GUI es fea a propósito. Funciona. Si quieres bonito, usa CLI.
+The GUI uses only Python's standard library — no extra dependencies needed beyond `requests`.
 
-## 🗃️ ¿Qué es SQLite?
+---
 
-El scraper guarda todo lo que indexa en `outputs/wuolah.sqlite`. Es solo un índice local. No se sube al repo (está en `.gitignore`).
+## Output Structure
 
-## 📂 Estructura
+```
+outputs/
+├── wuolah.sqlite          # Main database
+├── last_run_summary.json  # Summary of the last crawl
+└── raw_pages/             # Raw __NEXT_DATA__ dumps (if enabled)
+```
+
+SQLite tables: `universities`, `centers`, `communities`, `subjects`, `documents`, `community_artifacts`, `runs`.
+
+---
+
+## Project Structure
 
 ```
 wuolah-scraper/
@@ -147,33 +183,53 @@ wuolah-scraper/
 ├── config.example.json
 ├── README.md
 ├── LICENSE
-├── .gitignore
 └── src/wuolah_scraper/
     ├── __init__.py
     ├── __main__.py
-    ├── cli.py          # CLI argparse
-    ├── gui.py          # GUI Tkinter (modo guarro)
-    ├── client.py       # HTTP client con auth
-    ├── auth.py         # Manejo de cookies/tokens JWT
-    ├── crawler.py      # Lógica de crawl
-    ├── next_data.py    # Parser __NEXT_DATA__ de Next.js
-    ├── storage.py      # SQLite
-    └── pdf_cleaner.py  # Limpieza de PDFs
+    ├── cli.py            # CLI (argparse)
+    ├── gui.py            # Desktop GUI (Tkinter)
+    ├── client.py         # HTTP client with auth
+    ├── auth.py           # Cookie/token management, JWT decoding
+    ├── crawler.py        # Crawl orchestration
+    ├── next_data.py      # Next.js __NEXT_DATA__ parser
+    ├── storage.py        # SQLite persistence
+    └── pdf_cleaner.py    # PDF ad-link redaction
 ```
 
-## ⚡ Limitaciones
+## Architecture
 
-- La API de Wuolah a veces ignora `filter[category]` → el scraper filtra client-side también
-- La descarga oficial requiere cuenta PRO; con cuenta free no funciona
-- Sin cookies/tokens válidos no se puede autenticar
-- El login email/password no está implementado (solo cookies/tokens)
+The scraper uses a hybrid strategy:
 
-## 🔒 Seguridad
+1. **Structural discovery** — parses `__NEXT_DATA__` from Next.js server-rendered HTML (no browser required)
+2. **Document enumeration** — paginates through the REST API at `https://api.wuolah.com/v2/documents`
+3. **Document details** — fetches full metadata from `/v2/documents/{id}`
+4. **Subject resolution** — resolves community-subject relationships via `/v2/communities/{id}/subjects/{slug}`
+5. **Token refresh** — automatically refreshes access tokens through `/login/refresh`
 
-- `config.json` y `*.cookies.txt` están en `.gitignore`
-- No subas NUNCA tus cookies/tokens a GitHub
-- Si filtraste algo por accidente, rota los tokens en Wuolah inmediatamente
+This avoids depending on headless browsers or DOM scraping for the bulk of the work.
 
-## 📝 Licencia
+---
 
-MIT. Lo que hagas con esto es tu responsabilidad.
+## Known Limitations
+
+- The API's `filter[category]` parameter is sometimes ignored server-side; the scraper applies a client-side filter as a safety net
+- Official downloads require a premium account; free accounts get empty `fileUrl` responses
+- Email/password login is not implemented (cookie/token-based auth only)
+- Non-document artifacts (social posts, giveaways, streams) are only partially indexed from community preview pages
+
+---
+
+## Security
+
+- `config.json` and `*.cookies.txt` are in `.gitignore`
+- Never commit your credentials or session tokens
+- If you accidentally expose tokens, rotate them immediately in your Wuolah account settings
+- The scraper stores credentials only in your local `config.json`
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+This project is not affiliated with, endorsed by, or connected to Wuolah. Use at your own risk and in accordance with their terms of service.

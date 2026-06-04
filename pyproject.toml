@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "wuolah-scraper"
 version = "0.1.0"
-description = "Scraper de metadata y documentos de Wuolah — solo para cuentas premium"
+description = "Browse, search, and download documents from Wuolah using your own authenticated session."
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.10"
