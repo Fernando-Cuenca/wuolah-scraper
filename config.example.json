@@ -1,0 +1,20 @@
+{
+  "base_url": "https://wuolah.com",
+  "api_base_url": "https://api.wuolah.com",
+  "auth": {
+    "cookie_header": "",
+    "cookie_file": "",
+    "access_token": "",
+    "refresh_token": "",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+  },
+  "crawl": {
+    "request_timeout": 30,
+    "sleep_seconds": 0.15,
+    "page_size": 100,
+    "max_pages": 0,
+    "save_raw_pages": true,
+    "fetch_document_details": true,
+    "persist_preview_artifacts": true
+  }
+}

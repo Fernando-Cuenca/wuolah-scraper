@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wuolah-scraper"
+version = "0.1.0"
+description = "Scraper de metadata y documentos de Wuolah — solo para cuentas premium"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.28",
+]
+
+[project.optional-dependencies]
+pdf = ["PyMuPDF>=1.23"]
+all = ["PyMuPDF>=1.23"]
+
+[project.scripts]
+wuolah-scraper = "wuolah_scraper.cli:main"
+wuolah-gui = "wuolah_scraper.gui:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

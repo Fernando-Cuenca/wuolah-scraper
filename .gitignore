@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Configuración local (NO subir — contiene cookies y tokens)
+config.json
+*.cookies.txt
+*.cookies.json
+
+# Outputs del scraper
+outputs/
+*.sqlite
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
