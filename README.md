@@ -233,3 +233,9 @@ This avoids depending on headless browsers or DOM scraping for the bulk of the w
 MIT — see [LICENSE](LICENSE).
 
 This project is not affiliated with, endorsed by, or connected to Wuolah. Use at your own risk and in accordance with their terms of service.
+
+---
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for planned features including GUI improvements, visual course hierarchy navigation, AI-powered document filtering, and Obsidian vault export with graph view.
