@@ -228,8 +228,8 @@ class WuolahGUI:
                     key = q.get("queryKey") or []
                     if key and isinstance(key[0], dict) and key[0].get("id") == "communities":
                         data = q.get("state", {}).get("data")
-                        if isinstance(data, dict):
-                            community_id = int(data.get("id"))
+                        if isinstance(data, dict) and data.get("id") is not None:
+                            community_id = int(data["id"])
                             break
 
                 if not community_id:
